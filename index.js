@@ -35,6 +35,7 @@ app.get('/', (req, res) => {
 app.use('/api/vl/auth', require('./router/auth'));
 app.use('/api/vl/user', require('./router/user'));
 app.use('/api/vl/category', require('./router/category'));
+app.use('/api/vl/subcategory', require('./router/subCategory'));
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
