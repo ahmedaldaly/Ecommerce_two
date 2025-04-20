@@ -4,11 +4,40 @@ const cloudinary = require('../config/Cloud');
 const fs = require('fs')
 module.exports.getAllCategory = asyncHandler(async(req,res)=>{
     try{
-        const category = await Category.find();
+        const category = await Category.find({parent:null});
         if (!category) res.status(404).json({message:"category not found"});
         res.status(200).json(category);
     }catch(err){res.status(500).json(err)}
 })
+module.exports.getSubCategory = asyncHandler(async(req,res)=>{
+    try{
+        const category = await Category.find({parent:req.params.id});
+        if (!category) res.status(404).json({message:"category not found"});
+        res.status(200).json(category);
+    }catch(err){res.status(500).json(err)}
+})
+module.exports.getCategoryWithSubs = asyncHandler(async (req, res) => {
+  try {
+   
+    const parentCategories = await Category.find({ parent: null });
+
+    const result = await Promise.all(
+      parentCategories.map(async (cat) => {
+        const subcategories = await Category.find({ parent: cat._id });
+        return {
+          ...cat._doc,
+          subcategories
+        };
+      })
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 module.exports.getCategory = asyncHandler(async(req,res)=>{
     try{
         const category = await Category.findById(req.params.id);
