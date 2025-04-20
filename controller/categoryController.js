@@ -24,24 +24,33 @@ module.exports.deleteCategory = asyncHandler(async(req,res)=>{
         res.status(200).json({message:"Category delete success"});
     }catch(err){res.status(500).json(err)}
 })
-module.exports.addCategory = asyncHandler(async(req,res)=>{
-    try{
-       const find = await Category.findOne({name:req.body.name})
-       if (find){ res.status(400).json({message:'category already exists'})}
-        if (!req.file) {res.status(404).json({message:'image not found'});}
-       const result = await cloudinary.uploader.upload(req.file.path);
-       const newCategory = new Category ({
-        name:req.body.name,
-        image:{
-            url:result.secure_url,
-            id:result.public_id
-        }
-       })
-       await newCategory.save();
-       await fs.unlinkSync(req.file.path);
-       res.status(201).json(newCategory)
-    }catch(err){res.status(500).json(err)}
-})
+module.exports.addCategory = asyncHandler(async (req, res) => {
+  try {
+    const find = await Category.findOne({ name: req.body.name });
+    if (find) return res.status(400).json({ message: 'Category already exists' });
+
+    if (!req.file) return res.status(404).json({ message: 'Image not found' });
+
+    const result = await cloudinary.uploader.upload(req.file.path);
+
+    const newCategory = new Category({
+      name: req.body.name,
+      image: {
+        url: result.secure_url,
+        id: result.public_id
+      },
+      parent: req.body.parent || null
+    });
+
+    await newCategory.save();
+    fs.unlinkSync(req.file.path);
+
+    res.status(201).json(newCategory);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports.editCategory = asyncHandler(async (req, res) => {
     try {
       const category = await Category.findById(req.params.id);

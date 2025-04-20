@@ -1,41 +1,33 @@
-const mongoose =require('mongoose');
+const mongoose = require('mongoose');
+
 const CategorySchema = new mongoose.Schema({
-    name :{
-        type:String,
-        required:true,
-        unique:true,
-        trim:true,
-        minlength:5
+  name: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    minlength: 3
+  },
+  image: {
+    url: {
+      type: String,
+      trim: true,
+      required: true
     },
-    image:{
-        url:{
-            type:String,
-            trim:true,
-            required:true
-        },
-        id:{
-            type:String,
-            trim:true,
-            required:true
-        }
-    },
-    subCategory:[{
-        name:{
-            type:String,
-        },
-        image:{
-            url:{
-                type:String,
-                trim:true,
-               
-            },
-            id:{
-                type:String,
-                trim:true,
-              
-            }
-        }
-    },{timestamps:true}]
-})
-const Category = mongoose.model('Category',CategorySchema);
+    id: {
+      type: String,
+      trim: true,
+      required: true
+    }
+  },
+  parent: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    default: null // لو null يبقى هو كاتيجوري رئيسي
+  }
+}, {
+  timestamps: true
+});
+
+const Category = mongoose.model('Category', CategorySchema);
 module.exports = Category;
