@@ -39,3 +39,18 @@ module.exports.getUserOrder = asyncHandler (async (req, res)=>{
     if(!find)res.status(404).json({message:'orders not found'})
         res.status(200).json(find)
 })
+module.exports.removeOrder = asyncHandler (async (req, res)=> {
+    const find = await Order.findById(req.params.id);
+    if(!find)res.status(404).json({message:'order not found'});
+    const remove = await Order.findByIdAndDelete(req.params.id);
+    res.status(200).json({message:'order deleted success'})
+})
+module.exports.editOrder = asyncHandler (async (req, res)=>{
+    const find = await Order.findById(req.params.id);
+    if(!find)res.status(404).json({message:'order not found'});
+    const update = await Order.findByIdAndUpdate(req.params.id ,{
+        status:req.body.status,
+        amount:req.body.amount
+    },{new:true})
+    res.status(200).json(update)
+})
