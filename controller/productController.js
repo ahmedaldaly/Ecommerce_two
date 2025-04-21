@@ -12,6 +12,41 @@ module.exports.getAllProducts = asyncHandler (async (req, res)=>{
 })
 module.exports.addProduct = asyncHandler (async (req, res)=>{
     try{
+        const findCategory = await Category.find({name:req.body.category});
+        const findBrand = await Brand.find({name:req.body.brand});
+        if (!findCategory || !findBrand) {
+            res.status(404).json({message:'category or brand not found'})
+        }
+        const images = [];
+        for (const file of req.files) {
+          const result = await cloudinary.uploader.upload(file.path);
+          images.push({
+            url: result.secure_url,
+            id: result.public_id,
+          });
+        }
+        const newProduct = new Product ({
+            title:req.body.title,
+            description:req.body.description,
+            price:req.body.price,
+            price:req.body.price,
+            Category:req.body.Category,
+            brand:req.body.brand,
+            quantity:req.body.quantity,
+            color:req.body.color,
+            size:req.body.size,
+            discount:req.body.discount,
+            image: images,
+        })
         
-    }catch(err){res,status(500).json(err)}
+        const save = await newProduct.save();
+        for (const file of req.files) {
+           fs.unlinkSync(file.path)
+          }
+        res.status(201).json(save);
+    }catch(err){
+        for (const file of req.files) {
+            fs.unlinkSync(file.path)
+           }
+        res,status(500).json(err)}
 })
