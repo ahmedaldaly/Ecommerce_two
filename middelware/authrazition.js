@@ -3,12 +3,12 @@ const Jwt = require('jsonwebtoken');
 
 const auth = async (req, res, next) => {
     try {
-        const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+        const token = await req.headers.authorization && req.headers.authorization.split(' ')[1];
         if (!token) {
             return res.status(401).json({ message: 'No token provided' });
         }
 
-        const decoded = Jwt.verify(token, process.env.JWT_SECRET || "secret1234");
+        const decoded = await Jwt.verify(token, process.env.JWT_SECRET || "secret1234");
         const user = await User.findById(decoded.id);
 
         if (!user) {

@@ -22,6 +22,11 @@ const UserSchema =new mongoose.Schema({
         trim:true,
       default:'no address'
     },
+    phone:{
+        type:Number,
+        trim:true,
+      default:'no add phone'
+    },
     password:{
         type:String,
         required:true,

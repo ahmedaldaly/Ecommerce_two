@@ -24,6 +24,7 @@ module.exports.updateUser = asyncHandler(async(req,res)=>{
         isAdmin:req.body.isAdmin,
         name:req.body.name,
         address:req.body.address,
+        phone:req.body.phone,
         isTrader:req.body.isTrader,
             },{new:true})
             res.status(200).json(edit)
