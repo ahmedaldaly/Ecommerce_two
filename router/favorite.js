@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const {addFavorite,getFavorite,deleteFavorite} = require('../controller/favoriteController');
-router.route('/').post(addFavorite).get(getFavorite);
-router.delete('/:id',deleteFavorite);
+const {auth,authAndTrader,authAndAdmin,adminAndUser,adminAndTrader} = require('../middelware/authrazition')
+router.route('/').post(auth,addFavorite).get(auth,getFavorite);
+router.delete('/:id',auth,deleteFavorite);
 module.exports = router;
