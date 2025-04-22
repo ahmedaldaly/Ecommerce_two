@@ -37,6 +37,7 @@ app.use('/api/vl/user', require('./router/user'));
 app.use('/api/vl/brand', require('./router/brand'));
 app.use('/api/vl/product', require('./router/product'));
 app.use('/api/vl/favorite', require('./router/favorite'));
+app.use('/api/vl/comment', require('./router/comment'));
 app.use('/api/vl/order', require('./router/order'));
 app.use('/api/vl/category', require('./router/category'));
 
