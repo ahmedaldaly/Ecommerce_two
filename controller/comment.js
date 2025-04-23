@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const comment = require('../module/comment');
 const Jwt = require('jsonwebtoken');
 const  User  = require('../module/User');
+const Product = require('../module/Product')
 module.exports.addComment = asyncHandler(async(req , res)=>{
 try{
     const token = req.headers.authorization.split(' ')[1]
@@ -61,3 +62,49 @@ module.exports.editComment = asyncHandler(async(req, res)=>{
         res.status(500).json(error)
     }
 })
+
+module.exports.getTopRatedProducts = asyncHandler(async (req, res) => {
+  try {
+    const topProducts = await comment.aggregate([
+      {
+        $group: {
+          _id: "$product", // نجمع التقييمات حسب المنتج
+          avgRating: { $avg: "$rateing" }, // نحسب المتوسط
+          count: { $sum: 1 } // عدد التقييمات لهذا المنتج
+        }
+      },
+      {
+        $sort: { avgRating: -1 } // ترتيب من الأعلى إلى الأقل
+      },
+      {
+        $limit: 10 // نأخذ فقط أعلى 10
+      },
+      {
+        $lookup: {
+          from: "products", // اسم الكوليكشن الخاص بالمنتجات (تأكد من اسمه)
+          localField: "_id", // الـ _id هنا هو الـ product
+          foreignField: "_id",
+          as: "productDetails"
+        }
+      },
+      {
+        $unwind: "$productDetails" // نحول الناتج من مصفوفة إلى كائن واحد
+      },
+      {
+        $project: {
+          _id: 0,
+          productId: "$_id",
+          avgRating: 1,
+          count: 1,
+          title: "$productDetails.title",
+          image: "$productDetails.image",
+          price: "$productDetails.price"
+        }
+      }
+    ]);
+
+    res.status(200).json(topProducts);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error", error: err });
+  }
+});
