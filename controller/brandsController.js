@@ -2,13 +2,18 @@ const Brand = require('../module/Brands');
 const asyncHandler = require('express-async-handler');
 const cloudinary = require('../config/Cloud');
 const fs = require('fs');
+const Jwt = require('jsonwebtoken');
 module.exports.addBrand = asyncHandler (async (req, res)=> {
     try {
+        const token = req.headers.authorization.split(' ')[1]
+        const decoded =  Jwt.verify(token ,process.env.JWT_SECRET)
          const find = await Brand.findOne({name: req.body.name});
          if (find)res.status(404).json({message:'brand already exists'});
          const result = await cloudinary.uploader.upload(req.file.path);
          const newBrand = new Brand ({
             name:req.body.name,
+            user:decoded.id,
+            descrition:req.body.descrition,
             image :{
                 url:result.secure_url,
                 id:result.public_id
@@ -36,6 +41,15 @@ module.exports.getBrand = asyncHandler (async(req, res)=>{
         res.status(200).json(find);
     }catch(err){res.status(500).json(err)}
 })
+module.exports.getUserBrand = asyncHandler (async(req, res)=>{
+    try {
+        const token = req.headers.authorization.split(' ')[1]
+        const decoded =  Jwt.verify(token ,process.env.JWT_SECRET)
+        const find = await Brand.findOne({user:decoded.id});
+        if (!find) res.status(404).json({message:'brand not found'});
+        res.status(200).json(find);
+    }catch(err){res.status(500).json(err)}
+})
 module.exports.deleteBrand = asyncHandler (async(req, res)=>{
     try {
         const find = await Brand.findById(req.params.id);
@@ -58,6 +72,7 @@ module.exports.editBrand = asyncHandler (async(req, res)=>{
        }
         const edit = await Brand.findByIdAndUpdate(req.params.id,{
             name:req.body.name,
+            descrition:req.body.descrition,
             image:{
                 url:result.url,
                 id:result.id

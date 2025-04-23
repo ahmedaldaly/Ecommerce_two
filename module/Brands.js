@@ -7,6 +7,20 @@ const brandsSchema = new mongoose.Schema({
         unique:true,
         
     },
+    descrition: {
+        required:true,
+        type:String,
+        trim:true,
+        unique:true,
+        
+    },
+    user: {
+        required:true,
+        type:mongoose.Schema.Types.ObjectId,
+       ref:"User",
+        unique:true,
+        
+    },
     image:{
         url:{
             type:String,
