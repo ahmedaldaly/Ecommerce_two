@@ -1,7 +1,7 @@
 const Product = require('../module/Product');
 const Favorite = require('../module/favorites');
 const asyncHandler = require('express-async-handler');
-
+const Jwt = require('jsonwebtoken')
 module.exports.addFavorite = asyncHandler (async (req, res)=>{
     try{
         const token = req.headers.authorization.split(' ')[1]
@@ -24,8 +24,12 @@ module.exports.getFavorite = asyncHandler (async (req, res)=>{
     const decoded = Jwt.verify(token ,process.env.JWT_SECRET)
     const  find = await Favorite.find({user:decoded.id});
     if(!find) res.status(404).json({message:'favorite not found'});
-    const product = await Product.find({_id:find.Product});
-    res.status(200).json(product);
+  const map = find.map(fav => Product.findById(fav.Product));
+  const product = await Promise.all(map);
+    res.status(200).json({
+        id:decoded.id,
+        product
+    });
 });
 module.exports.deleteFavorite = asyncHandler (async (req , res)=> {
     const find = await Favorite.findById(req.params.id);

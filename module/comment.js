@@ -16,7 +16,14 @@ const commentSchema = new mongoose.Schema({
         trim:true,
         minlength:5,
         maxlength:300,
-    }
+    },
+    rateing:{
+        required:true,
+        type:Number,
+        trim:true,
+        min:1,
+        max:5,
+    },
 })
 const comment = mongoose.model('comment',commentSchema);
 module.exports = comment;
