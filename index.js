@@ -24,8 +24,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-const PORT = 4000;
+app.get("/", (req, res) => res.send("Express on Vercel"));
+const PORT = 3000;
 
 app.use(express.json());
 
