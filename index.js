@@ -2,6 +2,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const ConnectDB = require('./config/ConnectDB');
+const cors = require('cors')
 // google
 const session = require("express-session");
 const passport = require("passport");
@@ -9,7 +10,7 @@ const app = express();
 dotenv.config();
 ConnectDB();
 
-
+app.use(cors());
 // google
 app.use(
   session({
