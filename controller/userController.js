@@ -2,6 +2,7 @@ const  User  = require('../module/User');
 const asyncHandler = require('express-async-handler');
 const cloudinary = require('../config/Cloud');
 const fs = require('fs')
+const Jwt = require('jsonwebtoken')
 module.exports.getAllUser = asyncHandler(async(req,res)=>{
     try{
         const user =await User.find().select('-password')
@@ -70,3 +71,12 @@ module.exports.uploadImage = asyncHandler(async (req, res) => {
       res.status(500).json({ message: 'Upload failed', error: err });
     }
   });
+  module.exports.getUserByToken = asyncHandler(async(req, res)=>{
+    try{
+      const token = req.headers.authorization.split(' ')[1];
+      const decoded = Jwt.verify(token ,process.env.JWT_SECRET)
+      const user = await User.findById(decoded.id).select('-password')
+      if(!find)res.status(404).json({message:'user not found'})
+        res.status(200).json(user)
+    }catch(err){res.status(500).json(err)}
+  })
