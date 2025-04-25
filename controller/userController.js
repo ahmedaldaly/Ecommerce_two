@@ -74,9 +74,9 @@ module.exports.uploadImage = asyncHandler(async (req, res) => {
   module.exports.getUserByToken = asyncHandler(async(req, res)=>{
     try{
       const token = req.headers.authorization.split(' ')[1];
-      const decoded = Jwt.verify(token ,process.env.JWT_SECRET)
+      const decoded = Jwt.verify(token ,process.env.JWT_SECRET || 'secret12345')
       const user = await User.findById(decoded.id).select('-password')
-      if(!find)res.status(404).json({message:'user not found'})
+      if(!user)res.status(404).json({message:'user not found'})
         res.status(200).json(user)
     }catch(err){res.status(500).json(err)}
   })
