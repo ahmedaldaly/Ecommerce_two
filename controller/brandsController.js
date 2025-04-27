@@ -3,6 +3,7 @@ const asyncHandler = require('express-async-handler');
 const cloudinary = require('../config/Cloud');
 const fs = require('fs');
 const Jwt = require('jsonwebtoken');
+const Product = require ('../module/Product')
 module.exports.addBrand = asyncHandler (async (req, res)=> {
     try {
         const token = req.headers.authorization.split(' ')[1]
@@ -50,15 +51,42 @@ module.exports.getUserBrand = asyncHandler (async(req, res)=>{
         res.status(200).json(find);
     }catch(err){res.status(500).json(err)}
 })
-module.exports.deleteBrand = asyncHandler (async(req, res)=>{
+module.exports.deleteBrand = asyncHandler(async (req, res) => {
     try {
+        // 1. لاقي البراند
         const find = await Brand.findById(req.params.id);
-        if (!find) res.status(404).json({message:'brand not found'});
-        const removeImage = await cloudinary.uploader.destroy(find.image.id);
-        const remove = await Brand.findByIdAndDelete(req.params.id);
-        res.status(200).json({message:'category delete success'});
-    }catch(err){res.status(500).json(err)}
-})
+        if (!find) return res.status(404).json({ message: 'Brand not found' });
+
+        // 2. لاقي المنتجات اللي ليها نفس البراند
+        const findProducts = await Product.find({ brand: find.name });
+
+        // 3. امسح كل منتج مع صوره
+        for (const product of findProducts) {
+            // لو المنتج فيه صور
+            if (product.image && product.image.length > 0) {
+                for (const img of product.image) {
+                    await cloudinary.uploader.destroy(img.id);
+                }
+            }
+            // امسح المنتج نفسه
+            await Product.findByIdAndDelete(product._id);
+        }
+
+        // 4. امسح صورة البراند
+        if (find.image && find.image.id) {
+            await cloudinary.uploader.destroy(find.image.id);
+        }
+
+        // 5. امسح البراند
+        await Brand.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({ message: 'Brand and related products deleted successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json(err);
+    }
+});
+
 module.exports.editBrand = asyncHandler (async(req, res)=>{
     try {
         const find = await Brand.findById(req.params.id);
