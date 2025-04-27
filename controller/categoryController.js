@@ -9,6 +9,13 @@ module.exports.getAllCategory = asyncHandler(async(req,res)=>{
         res.status(200).json(category);
     }catch(err){res.status(500).json(err)}
 })
+module.exports.getAllCategorAndSub = asyncHandler(async(req,res)=>{
+    try{
+        const category = await Category.find();
+        if (!category) res.status(404).json({message:"category not found"});
+        res.status(200).json(category);
+    }catch(err){res.status(500).json(err)}
+})
 module.exports.getSubCategory = asyncHandler(async(req,res)=>{
     try{
         const category = await Category.find({parent:req.params.id});
