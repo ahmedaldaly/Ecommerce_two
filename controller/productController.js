@@ -3,6 +3,7 @@ const Category = require('../module/Category');
 const Brand = require('../module/Brands');
 const asyncHandler = require('express-async-handler');
 const cloudinary = require('../config/Cloud');
+const fs = require('fs')
 module.exports.getAllProducts = asyncHandler (async (req, res)=>{
     try{
         const find = await Product.find();
@@ -19,12 +20,19 @@ module.exports.getProduct = asyncHandler (async (req, res)=>{
 })
 module.exports.addProduct = asyncHandler (async (req, res)=>{
     try{
-        const findCategory = await Category.find({name:req.body.category});
-        const findBrand = await Brand.find({name:req.body.brand});
-        const check = await Product.find({title:req.body.title , brand:req.body.brand})
-        if (!findCategory || !findBrand|| check) {
-            res.status(404).json({message:'category or brand not found'})
-        }else{
+        const findCategory = await Category.findOne({name:req.body.category});
+        console.log(req.body.category)
+        const findBrand = await Brand.findOne({name:req.body.brand});
+        console.log(req.body.brand)
+        const check = await Product.findOne({title:req.body.title , brand:req.body.brand})
+        if (!findCategory ) {
+            res.status(404).json({message:'category  not found'})
+        }else if(!findBrand){
+          res.status(404).json({message:'  brand not found'})
+        }else if (check){
+          res.status(404).json({message:' Product already exist'})
+        }
+        else{
             const images = [];
             for (const file of req.files) {
               const result = await cloudinary.uploader.upload(file.path);
@@ -37,9 +45,8 @@ module.exports.addProduct = asyncHandler (async (req, res)=>{
                 title:req.body.title,
                 description:req.body.description,
                 price:req.body.price,
-                price:req.body.price,
-                Category:req.body.Category,
-                brand:req.body.brand,
+                category:findCategory.name,
+                brand:findBrand.name,
                 quantity:req.body.quantity,
                 color:req.body.color,
                 size:req.body.size,
