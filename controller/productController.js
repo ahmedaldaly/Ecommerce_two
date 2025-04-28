@@ -144,8 +144,10 @@ module.exports.deleteProductImage = asyncHandler(async (req, res) => {
         },
         { new: true }
       );
-      for (const file of req.files) {
-        fs.unlinkSync(file.path)
+      if (req.files){
+        for (const file of req.files) {
+          fs.unlinkSync(file.path)
+        }
       }
       res.status(200).json(updatedProduct);
     } catch (err) {
