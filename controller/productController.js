@@ -170,3 +170,18 @@ module.exports.deleteProductImage = asyncHandler(async (req, res) => {
   
     res.status(200).json(products);
   });
+  module.exports.getProductByBrand = asyncHandler(async (req, res) => {
+    const brand = req.query.brand;
+  
+    if (!brand) {
+      return res.status(400).json({ message: "brand is required" });
+    }
+  
+    const products = await Product.find({ brand: brand });
+  
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found for this brand" });
+    }
+  
+    res.status(200).json(products);
+  });
