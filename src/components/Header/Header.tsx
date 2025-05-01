@@ -20,6 +20,7 @@ import { MdOutlineStoreMallDirectory } from "react-icons/md";
 
 import cookie from "js-cookie";
 import { BiCategory, BiUser } from "react-icons/bi";
+import { GiBrandyBottle } from "react-icons/gi";
 type FormData = {
   email: string;
   password: string;
@@ -63,6 +64,7 @@ const Header = () => {
           setloading(false);
           cookie.set("userToken", data.data.token);
           console.log(data.data);
+          window.location.href ='/'
         });
     } catch (err) {
       setloading(false);
@@ -91,6 +93,10 @@ const Header = () => {
         setUser(data.data);
       });
   }, []);
+  const logout = ()=>{
+    cookie.remove('userToken')
+    window.location.href ='/'
+  }
   return (
     <>
       <AnimatePresence>
@@ -288,14 +294,16 @@ const Header = () => {
                      </Link>
                      {/*  */}
                         <Link href='' className="text-2xl my-3 flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiUser/></span> 
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><GiBrandyBottle/></span> 
                      <h1 className="text-xl"> Add Brand</h1>
                      </Link>
                      {/*  */}
                       </motion.div>}
                     </AnimatePresence>
                     {/*  */}
-                    <div className=" w-[95%] h-12 cursor-pointer hover:bg-red-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
+                    <div
+                    onClick={()=>logout()}
+                    className=" w-[95%] h-12 cursor-pointer hover:bg-red-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
                      <div className="text-2xl flex gap-5 items-center">
                      <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><CgLogOut/></span> 
                      <h1 className="text-xl">Log Out</h1>
