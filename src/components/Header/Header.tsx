@@ -14,8 +14,12 @@ import { BaseUrl } from "../BaseUrl";
 import { IoMdSettings } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { CgLogOut } from "react-icons/cg";
+import { MdAdminPanelSettings } from "react-icons/md";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { MdOutlineStoreMallDirectory } from "react-icons/md";
 
 import cookie from "js-cookie";
+import { BiCategory, BiUser } from "react-icons/bi";
 type FormData = {
   email: string;
   password: string;
@@ -24,6 +28,8 @@ type user = {
   _id: string;
   email: string;
   name: string;
+  isAdmin:boolean;
+  isTrader:boolean;
   image: {
     url: string;
   };
@@ -32,6 +38,9 @@ const Header = () => {
   const [menu, setMenu] = useState(false);
   const [userMenu, setUserMenu] = useState(false);
   const [loading, setloading] = useState(false);
+  const [adminMenu, setAdminMenu] = useState(false);
+  const [traderMenu, setTraderMenu] = useState(false);
+  
   const [user, setUser] = useState<user>();
   const pathname = usePathname();
   const token = cookie.get("userToken");
@@ -217,16 +226,83 @@ const Header = () => {
                      </div>
                       <div className="text-xl"><IoIosArrowForward/></div>
                     </div>
-                    {/* here */}
-                    <div className=" w-[95%] h-12 cursor-pointer mt-5 rounded-xl justify-center gap-5   flex   items-center ">
+                    {/*  */}
+                    {user.isAdmin &&<div className=" w-[95%] flex-wrap h-12 cursor-pointer hover:bg-gray-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
                      <div className="text-2xl flex gap-5 items-center">
-                     <span className="w-10  h-10 flex justify-center items-center rounded-full bg-gray-200"><CgLogOut/></span> 
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdAdminPanelSettings/></span> 
+                     <h1 className="text-xl">Admin</h1>
                      </div>
+                      <div onClick={()=>setAdminMenu(!adminMenu)} className="text-xl"><IoMdArrowDropdown/></div>
+                    </div>}
+                    <AnimatePresence>
+                    {adminMenu &&<motion.div
+                    initial={{scaleY:0}}
+                    whileInView={{scaleY:1}}
+                    exit={{scaleY:0}}
+                    transition={{duration:0.3}}
+                    className="w-[95%] my-5 flex flex-wrap max-md:px-10 px-20 justify-center min-h-20 ">
+                      {/*  */}
+                        <Link href='' className="text-2xl flex gap-5 items-center">  
+
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdOutlineStoreMallDirectory/></span> 
+                     <h1 className="text-xl">All Product</h1>
+                     </Link>
+                     {/*  */}
+                        <Link href='' className="text-2xl my-3 flex gap-5 items-center">
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiCategory/></span> 
+                     <h1 className="text-xl">Category</h1>
+                     </Link>
+                     {/*  */}
+                        <Link href='' className="text-2xl my-3 flex gap-5 items-center">
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiUser/></span> 
+                     <h1 className="text-xl"> Users</h1>
+                     </Link>
+                     {/*here  */}
+                      </motion.div>}
+                    </AnimatePresence>
+                    {/*  */}
+                    {user.isTrader &&<div className=" w-[95%] flex-wrap h-12 cursor-pointer hover:bg-gray-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
                      <div className="text-2xl flex gap-5 items-center">
-                     <span className="w-10  h-10 flex justify-center items-center rounded-full bg-gray-200"><CgLogOut/></span> 
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdAdminPanelSettings/></span> 
+                     <h1 className="text-xl">Trader</h1>
                      </div>
-                      
+                      <div onClick={()=>setTraderMenu(!traderMenu)} className="text-xl"><IoMdArrowDropdown/></div>
+                    </div>}
+                    <AnimatePresence>
+                    {traderMenu &&<motion.div
+                    initial={{scaleY:0}}
+                    whileInView={{scaleY:1}}
+                    exit={{scaleY:0}}
+                    transition={{duration:0.3}}
+                    className="w-[95%] my-5 flex flex-wrap max-md:px-10 px-20 justify-center min-h-20 ">
+                      {/*  */}
+                        <Link href='' className="text-2xl flex gap-5 items-center">  
+
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdOutlineStoreMallDirectory/></span> 
+                     <h1 className="text-xl">Add Product</h1>
+                     </Link>
+                     {/*  */}
+                        <Link href='' className="text-2xl my-3 flex gap-5 items-center">
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiCategory/></span> 
+                     <h1 className="text-xl">Add Category</h1>
+                     </Link>
+                     {/*  */}
+                        <Link href='' className="text-2xl my-3 flex gap-5 items-center">
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiUser/></span> 
+                     <h1 className="text-xl"> Add Brand</h1>
+                     </Link>
+                     {/*  */}
+                      </motion.div>}
+                    </AnimatePresence>
+                    {/*  */}
+                    <div className=" w-[95%] h-12 cursor-pointer hover:bg-red-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
+                     <div className="text-2xl flex gap-5 items-center">
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><CgLogOut/></span> 
+                     <h1 className="text-xl">Log Out</h1>
+                     </div>
                     </div>
+                   {/*  */}
+                    
                     
                   </div>
                 )}
