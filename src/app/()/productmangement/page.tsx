@@ -60,7 +60,7 @@ const Page = () => {
                   <span
                     key={index}
                     onClick={() => handleColorClick(item._id, index)}
-                    className={`w-5 h-5 cursor-pointer rounded-full border border-black ${imageIndex[item._id]?'border-2 border-orange-400':'border-1 border-gray-200'}`}
+                    className={`w-5 h-5 cursor-pointer rounded-full ${imageIndex[item._id] === index ? 'border-3 border-orange-400' : 'border border-gray-200'}`}
                     style={{ backgroundColor: color }}
                   />
                 ))}
