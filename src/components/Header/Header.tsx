@@ -13,7 +13,7 @@ import axios from "axios";
 import { BaseUrl } from "../BaseUrl";
 import { IoMdSettings } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
-import { CgLogOut } from "react-icons/cg";
+import { CgLogOut, CgProductHunt } from "react-icons/cg";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { MdOutlineStoreMallDirectory } from "react-icons/md";
@@ -293,9 +293,9 @@ const Header = () => {
                      <h1 className="text-xl">Add Category</h1>
                      </Link>
                      {/*  */}
-                        <Link href='' className="text-2xl my-3 flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><GiBrandyBottle/></span> 
-                     <h1 className="text-xl"> Add Brand</h1>
+                        <Link href='/productmangement' className="text-2xl my-3 flex gap-5 items-center">
+                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><CgProductHunt/></span> 
+                     <h1 className="text-xl"> All Product</h1>
                      </Link>
                      {/*  */}
                       </motion.div>}
