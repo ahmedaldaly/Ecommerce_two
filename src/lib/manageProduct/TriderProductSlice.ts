@@ -33,7 +33,9 @@ export const TriderProductSlice = createSlice({
   reducers: {
     removeProductFromState: (state, action) => {
       const id = action.payload;
-      console.log(id)
+       axios.delete(`${BaseUrl}/api/vl/product/${id}`, {
+        headers: { authorization: `Bearer ${token}` }
+      });
       state.products = state.products.filter((product: { _id: any; }) => product._id !== id);
     }
   }

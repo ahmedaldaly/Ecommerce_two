@@ -23,9 +23,7 @@ const Page = () => {
   console.log(product)
   const remove = async (id: string) => {
     try {
-      await axios.delete(`${BaseUrl}/api/vl/product/${id}`, {
-        headers: { authorization: `Bearer ${Cookies.get("userToken")}` }
-      });
+    
   
       dispatch(removeProductFromState(id));
      
@@ -62,7 +60,7 @@ const Page = () => {
                   <span
                     key={index}
                     onClick={() => handleColorClick(item._id, index)}
-                    className="w-5 h-5 rounded-full border border-black"
+                    className={`w-5 h-5 cursor-pointer rounded-full border border-black ${imageIndex[item._id]?'border-2 border-orange-400':'border-1 border-gray-200'}`}
                     style={{ backgroundColor: color }}
                   />
                 ))}
