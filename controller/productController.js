@@ -26,10 +26,19 @@ module.exports.addProduct = asyncHandler (async (req, res)=>{
         console.log(req.body.brand)
         const check = await Product.findOne({title:req.body.title , brand:req.body.brand})
         if (!findCategory ) {
+          for (const file of req.files) {
+            fs.unlinkSync(file.path)
+           }
             res.status(404).json({message:'category  not found'})
         }else if(!findBrand){
+          for (const file of req.files) {
+            fs.unlinkSync(file.path)
+           }
           res.status(404).json({message:'  brand not found'})
         }else if (check){
+          for (const file of req.files) {
+            fs.unlinkSync(file.path)
+           }
           res.status(404).json({message:' Product already exist'})
         }
         else{
@@ -79,33 +88,44 @@ module.exports.deleteProduct = asyncHandler (async (req, res)=>{
     }catch(err){res.status(500).json(err)}
 })
 module.exports.deleteProductImage = asyncHandler(async (req, res) => {
-    try {
-      const { productId, imageId } = req.body;
-  
-      const product = await Product.findById(productId);
-      if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
-      }
-  
-      const imageToDelete = product.image.find(img => img.id === imageId);
-      if (!imageToDelete) {
-        return res.status(404).json({ message: 'Image not found in this product' });
-      }
-  
-      
-      await cloudinary.uploader.destroy(imageToDelete.id);
-  
-    
-      await Product.findByIdAndUpdate(productId, {
-        $pull: { image: { id: imageId } }
-      });
-  
-      res.status(200).json({ message: 'Image deleted successfully' });
-  
-    } catch (err) {
-      res.status(500).json({ message: 'Server error', error: err });
+  try {
+    const { productId, imageId } = req.body;
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
     }
-  });
+
+    const imageIndex = product.image.findIndex(img => img.id === imageId);
+    if (imageIndex === -1) {
+      return res.status(404).json({ message: 'Image not found in this product' });
+    }
+
+    const imageToDelete = product.image[imageIndex];
+
+    // حذف الصورة من Cloudinary
+    await cloudinary.uploader.destroy(imageToDelete.id);
+
+    // حذف الصورة من المصفوفة
+    product.image.splice(imageIndex, 1);
+
+    // حذف اللون المقابل
+    if (product.color?.[0]) {
+      let parsedColors = JSON.parse(product.color[0]);
+      parsedColors.splice(imageIndex, 1);
+      product.color[0] = JSON.stringify(parsedColors);
+    }
+
+    await product.save();
+
+    res.status(200).json({ message: 'Image and corresponding color deleted successfully' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+});
+
   module.exports.editProduct = asyncHandler(async (req, res) => {
     try {
       const product = await Product.findById(req.params.id);
