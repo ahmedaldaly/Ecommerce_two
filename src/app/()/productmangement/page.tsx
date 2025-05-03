@@ -6,13 +6,14 @@ import {
   removeImage,
 } from "../../../lib/manageProduct/TriderProductSlice";
 import { MdDeleteOutline } from "react-icons/md";
-
+import cookie from 'js-cookie'
 const Page = () => {
   const dispatch = useDispatch();
   const [product, setProduct] = useState([]);
   const [imageIndex, setImageIndex] = useState<{ [productId: string]: number }>({});
+  const [editingProduct, setEditingProduct] = useState<any>(null);
   const fetchTrider = useSelector((state: any) => state.TriderProduct);
-
+const token = cookie.get('userToken')
   useEffect(() => {
     setProduct(fetchTrider.products);
   }, [fetchTrider.products]);
@@ -32,9 +33,42 @@ const Page = () => {
   const handleRemoveImage = async (imageId: string, productId: string, index: number) => {
     try {
       dispatch(removeImage({ imageId, productId, index }));
-      console.log(index)
     } catch (err) {
       console.error("Failed to delete image:", err);
+    }
+  };
+
+  const handleEditClick = (product: any) => {
+    const parsedColors = product.color?.[0] ? JSON.parse(product.color[0]) : [];
+    setEditingProduct({ ...product, color: parsedColors });
+  };
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setEditingProduct({ ...editingProduct, [e.target.name]: e.target.value });
+  };
+
+  const submitEdit = async () => {
+    try {
+      const updatedData = {
+        ...editingProduct,
+        color: [JSON.stringify(editingProduct.color)],
+      };
+
+      const res = await fetch(`http://localhost:4000/api/vl/product/${editingProduct._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "authorization":`Bearer ${token}`
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!res.ok) throw new Error("Failed to update product");
+      alert("Product updated successfully!");
+      setEditingProduct(null);
+      
+    } catch (error) {
+      console.error("Update error:", error);
     }
   };
 
@@ -47,6 +81,7 @@ const Page = () => {
         {product.map((item: any) => {
           const colors = item.color?.[0] ? JSON.parse(item.color[0]) : [];
           const currentIndex = imageIndex[item._id] || 0;
+
           return (
             <div
               className="w-56 h-[450px] relative rounded-3xl shadow-md border-1 border-gray-200 text-center py-2"
@@ -85,11 +120,14 @@ const Page = () => {
               <div className="w-full flex justify-between px-5 my-2">
                 <button
                   onClick={() => remove(item._id)}
-                  className="w-14 h-6 rounded-md flex justify-center items-center shadow-md bg-red-600 text-white font-bold border border-gray-200"
+                  className="w-14 cursor-pointer h-6 rounded-md flex justify-center items-center hover:shadow-xl hover:scale-105 bg-red-600 text-white font-bold border border-gray-200"
                 >
                   Delete
                 </button>
-                <button className="w-14 h-6 rounded-md flex justify-center items-center shadow-md bg-green-600 text-white font-bold border border-gray-200">
+                <button
+                  onClick={() => handleEditClick(item)}
+                  className="w-14 cursor-pointer hover:shadow-xl h-6 rounded-md flex justify-center hover:scale-105 items-center  bg-green-600 text-white font-bold border border-gray-200"
+                >
                   Edit
                 </button>
               </div>
@@ -97,6 +135,58 @@ const Page = () => {
           );
         })}
       </div>
+
+      {editingProduct && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-5 rounded-lg w-96">
+            <h2 className="text-xl font-bold mb-3">Edit Product</h2>
+            <input
+              className="border p-2 mb-2 w-full"
+              name="title"
+              value={editingProduct.title}
+              onChange={handleEditChange}
+              placeholder="Title"
+            />
+            <textarea
+              className="border p-2 mb-2 w-full"
+              name="description"
+              value={editingProduct.description}
+              onChange={handleEditChange}
+              placeholder="Description"
+            />
+            <input
+              className="border p-2 mb-2 w-full"
+              name="price"
+              type="number"
+              value={editingProduct.price}
+              onChange={handleEditChange}
+              placeholder="Price"
+            />
+            <input
+              className="border p-2 mb-2 w-full"
+              name="category"
+              value={editingProduct.category}
+              onChange={handleEditChange}
+              placeholder="Category"
+            />
+          
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={submitEdit}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setEditingProduct(null)}
+                className="bg-gray-300 px-4 py-2 rounded-md"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
