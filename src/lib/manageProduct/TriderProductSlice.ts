@@ -33,13 +33,46 @@ export const TriderProductSlice = createSlice({
   reducers: {
     removeProductFromState: (state, action) => {
       const id = action.payload;
-       axios.delete(`${BaseUrl}/api/vl/product/${id}`, {
+      axios.delete(`${BaseUrl}/api/vl/product/${id}`, {
         headers: { authorization: `Bearer ${token}` }
       });
-      state.products = state.products.filter((product: { _id: any; }) => product._id !== id);
+      state.products = state.products.filter((product: { _id: any }) => product._id !== id);
+    },
+    removeImage: (state, action) => {
+      const { productId, imageId, index } = action.payload;
+
+      axios.delete(`${BaseUrl}/api/vl/product`, {
+        data: {
+          productId,
+          imageId
+        },
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      });
+
+      state.products = state.products.map((product: { _id: any; image: any[]; color: any; }) => {
+        if (product._id === productId) {
+          const updatedImages = product.image.filter((img: any) => img.id !== imageId);
+
+          let updatedColors = [...product.color];
+          if (updatedColors[0]) {
+            const parsedColors = JSON.parse(updatedColors[0]);
+            parsedColors.splice(index, 1);
+            updatedColors[0] = JSON.stringify(parsedColors);
+          }
+
+          return {
+            ...product,
+            image: updatedImages,
+            color: updatedColors
+          };
+        }
+        return product;
+      });
     }
   }
 });
 
-export const { removeProductFromState } = TriderProductSlice.actions;
+export const { removeProductFromState, removeImage } = TriderProductSlice.actions;
 export default TriderProductSlice.reducer;
