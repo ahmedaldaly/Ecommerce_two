@@ -111,9 +111,9 @@ module.exports.deleteProductImage = asyncHandler(async (req, res) => {
 
     // حذف اللون المقابل
     if (product.color?.[0]) {
-      let parsedColors = JSON.parse(product.color[0]);
+      let parsedColors = product.color[0].split(',');
       parsedColors.splice(imageIndex, 1);
-      product.color[0] = JSON.stringify(parsedColors);
+      product.color[0] = parsedColors.join(',');
     }
 
     await product.save();
