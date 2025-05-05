@@ -100,8 +100,8 @@ const token = cookie.get('userToken')
               >
                 <MdDeleteOutline />
               </div>
-              <p>{item.category}</p>
-              <p>{item.price}</p>
+              
+              <p className="text-green-500">{item.price}$</p>
               <h1>{item.title}</h1>
               <div className="flex justify-center gap-2 mt-2">
                 {colors.map((color: string, index: number) => (

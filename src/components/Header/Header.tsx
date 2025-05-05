@@ -192,7 +192,7 @@ const Header = () => {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 100, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed h-full w-96 max-md:w-72 border-1 top-0 right-0 border-gray-200 bg-white"
+            className="fixed h-full w-96 max-md:w-72 border-1 z-10 top-0 right-0 border-gray-200 bg-white"
           >
             {/*  */}
             {token ? (
@@ -282,13 +282,13 @@ const Header = () => {
                     transition={{duration:0.3}}
                     className="w-[95%] my-5 flex flex-wrap max-md:px-10 px-20 justify-center min-h-20 ">
                       {/*  */}
-                        <Link href='' className="text-2xl flex gap-5 items-center">  
+                        <Link href='/addproduct' className="text-2xl flex gap-5 items-center">  
 
                      <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdOutlineStoreMallDirectory/></span> 
                      <h1 className="text-xl">Add Product</h1>
                      </Link>
                      {/*  */}
-                        <Link href='' className="text-2xl my-3 flex gap-5 items-center">
+                        <Link href='/addcategory' className="text-2xl my-3 flex gap-5 items-center">
                      <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiCategory/></span> 
                      <h1 className="text-xl">Add Category</h1>
                      </Link>
