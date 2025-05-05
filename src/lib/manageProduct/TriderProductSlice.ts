@@ -7,23 +7,26 @@ let initialData: any = [];
 let brand: any = [];
 const token = Cookies.get('userToken');
 
+// جلب البيانات الابتدائية
 const fetchInitialData = async () => {
   try {
     const res = await axios.get(`${BaseUrl}/api/vl/brand/user`, {
       headers: { authorization: `Bearer ${token}` }
     });
     brand = res.data;
+
     const response = await axios.get(
       `${BaseUrl}/api/vl/product/by_brand/?brand=${encodeURIComponent(brand.name)}`
     );
     initialData = response.data;
   } catch (err) {
-    console.log(err);
+    console.error("Error fetching initial data:", err);
   }
 };
 
 await fetchInitialData();
 
+// تعريف الـ slice
 export const TriderProductSlice = createSlice({
   name: 'TriderProductSlice',
   initialState: {
@@ -31,16 +34,26 @@ export const TriderProductSlice = createSlice({
     loading: false
   },
   reducers: {
+    // حذف منتج من الحالة + من الباكيند
     removeProductFromState: (state, action) => {
       const id = action.payload;
+
+      // حذف من الباكيند
       axios.delete(`${BaseUrl}/api/vl/product/${id}`, {
         headers: { authorization: `Bearer ${token}` }
       });
-      state.products = state.products.filter((product: { _id: any }) => product._id !== id);
+
+      // تحديث الحالة
+      state.products = state.products.filter(
+        (product: { _id: any }) => product._id !== id
+      );
     },
+
+    // حذف صورة + لون من منتج معين
     removeImage: (state, action) => {
       const { productId, imageId, index } = action.payload;
 
+      // حذف من الباكيند
       axios.delete(`${BaseUrl}/api/vl/product`, {
         data: {
           productId,
@@ -51,15 +64,18 @@ export const TriderProductSlice = createSlice({
         }
       });
 
-      state.products = state.products.map((product: { _id: any; image: any[]; color: any; }) => {
+      // تحديث المنتج داخل الحالة
+      state.products = state.products.map((product: any) => {
         if (product._id === productId) {
           const updatedImages = product.image.filter((img: any) => img.id !== imageId);
 
           let updatedColors = [...product.color];
+
+          // تعديل الألوان بطريقة آمنة
           if (updatedColors[0]) {
-            const parsedColors = JSON.parse(updatedColors[0]);
+            const parsedColors = updatedColors[0].split(','); // <-- التعديل المهم هنا
             parsedColors.splice(index, 1);
-            updatedColors[0] = JSON.stringify(parsedColors);
+            updatedColors[0] = parsedColors.join(',');
           }
 
           return {

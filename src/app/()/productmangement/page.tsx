@@ -6,14 +6,16 @@ import {
   removeImage,
 } from "../../../lib/manageProduct/TriderProductSlice";
 import { MdDeleteOutline } from "react-icons/md";
-import cookie from 'js-cookie'
+import cookie from "js-cookie";
 const Page = () => {
   const dispatch = useDispatch();
   const [product, setProduct] = useState([]);
-  const [imageIndex, setImageIndex] = useState<{ [productId: string]: number }>({});
+  const [imageIndex, setImageIndex] = useState<{ [productId: string]: number }>(
+    {}
+  );
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const fetchTrider = useSelector((state: any) => state.TriderProduct);
-const token = cookie.get('userToken')
+  const token = cookie.get("userToken");
   useEffect(() => {
     setProduct(fetchTrider.products);
   }, [fetchTrider.products]);
@@ -30,7 +32,11 @@ const token = cookie.get('userToken')
     }
   };
 
-  const handleRemoveImage = async (imageId: string, productId: string, index: number) => {
+  const handleRemoveImage = async (
+    imageId: string,
+    productId: string,
+    index: number
+  ) => {
     try {
       dispatch(removeImage({ imageId, productId, index }));
     } catch (err) {
@@ -39,11 +45,13 @@ const token = cookie.get('userToken')
   };
 
   const handleEditClick = (product: any) => {
-    const parsedColors = product.color?.[0] ? JSON.parse(product.color[0]) : [];
+    const parsedColors = product.color?.[0]?.split(",") || [];
     setEditingProduct({ ...product, color: parsedColors });
   };
 
-  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleEditChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setEditingProduct({ ...editingProduct, [e.target.name]: e.target.value });
   };
 
@@ -54,19 +62,21 @@ const token = cookie.get('userToken')
         color: [JSON.stringify(editingProduct.color)],
       };
 
-      const res = await fetch(`http://localhost:4000/api/vl/product/${editingProduct._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "authorization":`Bearer ${token}`
-        },
-        body: JSON.stringify(updatedData),
-      });
+      const res = await fetch(
+        `http://localhost:4000/api/vl/product/${editingProduct._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
 
       if (!res.ok) throw new Error("Failed to update product");
       alert("Product updated successfully!");
       setEditingProduct(null);
-      
     } catch (error) {
       console.error("Update error:", error);
     }
@@ -79,7 +89,8 @@ const token = cookie.get('userToken')
       </h1>
       <div className="w-full min-h-screen flex flex-wrap justify-center gap-5 my-5">
         {product.map((item: any) => {
-          const colors = item.color?.[0] ? JSON.parse(item.color[0]) : [];
+          const colors = item.color?.[0]?.split(",") || [];
+
           const currentIndex = imageIndex[item._id] || 0;
 
           return (
@@ -94,28 +105,39 @@ const token = cookie.get('userToken')
               />
               <div
                 onClick={() =>
-                  handleRemoveImage(item.image[currentIndex]?.id, item._id, currentIndex)
+                  handleRemoveImage(
+                    item.image[currentIndex]?.id,
+                    item._id,
+                    currentIndex
+                  )
                 }
                 className="text-red-500 text-2xl absolute top-5 right-7 cursor-pointer"
               >
                 <MdDeleteOutline />
               </div>
-              
+
               <p className="text-green-500">{item.price}$</p>
               <h1>{item.title}</h1>
               <div className="flex justify-center gap-2 mt-2">
-                {colors.map((color: string, index: number) => (
-                  <span
-                    key={index}
-                    onClick={() => handleColorClick(item._id, index)}
-                    className={`w-5 h-5 cursor-pointer rounded-full ${
-                      currentIndex === index
-                        ? "border-3 border-orange-400"
-                        : "border border-gray-200"
-                    }`}
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
+              {colors.map((color: string, index: number) => {
+  // تنظيف اللون من علامات الاقتباس والأقواس المربعة
+  const cleanedColor = color.replace(/["\[\]]/g, ""); // إزالة " و [ و ]
+  console.log(cleanedColor);
+  
+  return (
+    <span
+      key={index}
+      onClick={() => handleColorClick(item._id, index)}
+      className={`w-5 h-5 cursor-pointer rounded-full ${
+        currentIndex === index
+          ? "border-3 border-orange-400"
+          : "border border-gray-200"
+      }`}
+      style={{ backgroundColor: cleanedColor }} // استخدام cleanedColor هنا
+    />
+  );
+})}
+
               </div>
               <div className="w-full flex justify-between px-5 my-2">
                 <button
@@ -169,7 +191,7 @@ const token = cookie.get('userToken')
               onChange={handleEditChange}
               placeholder="Category"
             />
-          
+
             <div className="flex justify-between mt-4">
               <button
                 onClick={submitEdit}
