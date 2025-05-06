@@ -29,8 +29,8 @@ type user = {
   _id: string;
   email: string;
   name: string;
-  isAdmin:boolean;
-  isTrader:boolean;
+  isAdmin: boolean;
+  isTrader: boolean;
   image: {
     url: string;
   };
@@ -41,7 +41,7 @@ const Header = () => {
   const [loading, setloading] = useState(false);
   const [adminMenu, setAdminMenu] = useState(false);
   const [traderMenu, setTraderMenu] = useState(false);
-  
+
   const [user, setUser] = useState<user>();
   const pathname = usePathname();
   const token = cookie.get("userToken");
@@ -64,7 +64,7 @@ const Header = () => {
           setloading(false);
           cookie.set("userToken", data.data.token);
           console.log(data.data);
-          window.location.href ='/'
+          window.location.href = "/";
         });
     } catch (err) {
       setloading(false);
@@ -93,10 +93,10 @@ const Header = () => {
         setUser(data.data);
       });
   }, []);
-  const logout = ()=>{
-    cookie.remove('userToken')
-    window.location.href ='/'
-  }
+  const logout = () => {
+    cookie.remove("userToken");
+    window.location.href = "/";
+  };
   return (
     <>
       <AnimatePresence>
@@ -197,7 +197,7 @@ const Header = () => {
             {/*  */}
             {token ? (
               <>
-               <div className="w-full p-7 flex justify-between">
+                <div className="w-full p-7 flex justify-between">
                   <h1 className=" ">Hello: {user?.name}👋</h1>
                   <div
                     className="text-2xl cursor-pointer text-orange-500"
@@ -218,100 +218,162 @@ const Header = () => {
                     </div>
                     {/*  */}
                     <div className=" w-[95%] hover:bg-gray-300 cursor-pointer duration-300 h-12 my-2 mt-5 px-5 rounded-xl justify-between   flex   items-center gap-3">
-                     <div className="text-2xl flex gap-5 items-center">
-                      <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><FaCircleUser/></span>
-                     <h1 className="text-xl">View all data</h1>
-                     </div>
-                      <div className="text-xl"><IoIosArrowForward/></div>
+                      <div className="text-2xl flex gap-5 items-center">
+                        <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                          <FaCircleUser />
+                        </span>
+                        <h1 className="text-xl">View all data</h1>
+                      </div>
+                      <div className="text-xl">
+                        <IoIosArrowForward />
+                      </div>
                     </div>
                     {/*  */}
                     <div className=" w-[95%] h-12 cursor-pointer hover:bg-gray-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
-                     <div className="text-2xl flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><IoMdSettings/></span> 
-                     <h1 className="text-xl">Setting</h1>
-                     </div>
-                      <div className="text-xl"><IoIosArrowForward/></div>
+                      <div className="text-2xl flex gap-5 items-center">
+                        <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                          <IoMdSettings />
+                        </span>
+                        <h1 className="text-xl">Setting</h1>
+                      </div>
+                      <div className="text-xl">
+                        <IoIosArrowForward />
+                      </div>
                     </div>
                     {/*  */}
-                    {user.isAdmin &&<div className=" w-[95%] flex-wrap h-12 cursor-pointer hover:bg-gray-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
-                     <div className="text-2xl flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdAdminPanelSettings/></span> 
-                     <h1 className="text-xl">Admin</h1>
-                     </div>
-                      <div onClick={()=>setAdminMenu(!adminMenu)} className="text-xl"><IoMdArrowDropdown/></div>
-                    </div>}
+                    {user.isAdmin && (
+                      <div className=" w-[95%] flex-wrap h-12 cursor-pointer hover:bg-gray-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
+                        <div className="text-2xl flex gap-5 items-center">
+                          <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                            <MdAdminPanelSettings />
+                          </span>
+                          <h1 className="text-xl">Admin</h1>
+                        </div>
+                        <div
+                          onClick={() => setAdminMenu(!adminMenu)}
+                          className="text-xl"
+                        >
+                          <IoMdArrowDropdown />
+                        </div>
+                      </div>
+                    )}
                     <AnimatePresence>
-                    {adminMenu &&<motion.div
-                    initial={{scaleY:0}}
-                    whileInView={{scaleY:1}}
-                    exit={{scaleY:0}}
-                    transition={{duration:0.3}}
-                    className="w-[95%] my-5 flex flex-wrap max-md:px-10 px-20 justify-center min-h-20 ">
-                      {/*  */}
-                        <Link href='' className="text-2xl flex gap-5 items-center">  
-
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdOutlineStoreMallDirectory/></span> 
-                     <h1 className="text-xl">All Product</h1>
-                     </Link>
-                     {/*  */}
-                        <Link href='' className="text-2xl my-3 flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiCategory/></span> 
-                     <h1 className="text-xl">Category</h1>
-                     </Link>
-                     {/*  */}
-                        <Link href='' className="text-2xl my-3 flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiUser/></span> 
-                     <h1 className="text-xl"> Users</h1>
-                     </Link>
-                     {/*here  */}
-                      </motion.div>}
+                      {adminMenu && (
+                        <motion.div
+                          initial={{ scaleY: 0 }}
+                          whileInView={{ scaleY: 1 }}
+                          exit={{ scaleY: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="w-[95%] my-5 flex flex-wrap max-md:px-10 px-20 justify-center min-h-20 "
+                        >
+                           {/*  */}
+                           <Link
+                            href="/usermangement"
+                            className="text-2xl my-3 flex gap-5 items-center"
+                          >
+                            <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                              <BiUser />
+                            </span>
+                            <h1 className="text-xl"> Users</h1>
+                          </Link>
+                          {/*  */}
+                          <Link
+                            href=""
+                            className="text-2xl my-3 flex gap-5 items-center"
+                          >
+                            <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                              <BiCategory />
+                            </span>
+                            <h1 className="text-xl">Category</h1>
+                          </Link>
+                         
+                          {/*  */}
+                          <Link
+                            href="/adminproduct"
+                            className="text-2xl flex gap-5 items-center"
+                          >
+                            <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                              <MdOutlineStoreMallDirectory />
+                            </span>
+                            <h1 className="text-xl">Orders Trader</h1>
+                          </Link>
+                          {/*here  */}
+                        </motion.div>
+                      )}
                     </AnimatePresence>
                     {/*  */}
-                    {user.isTrader &&<div className=" w-[95%] flex-wrap h-12 cursor-pointer hover:bg-gray-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
-                     <div className="text-2xl flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdAdminPanelSettings/></span> 
-                     <h1 className="text-xl">Trader</h1>
-                     </div>
-                      <div onClick={()=>setTraderMenu(!traderMenu)} className="text-xl"><IoMdArrowDropdown/></div>
-                    </div>}
+                    {user.isTrader && (
+                      <div className=" w-[95%] flex-wrap h-12 cursor-pointer hover:bg-gray-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
+                        <div className="text-2xl flex gap-5 items-center">
+                          <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                            <MdAdminPanelSettings />
+                          </span>
+                          <h1 className="text-xl">Trader</h1>
+                        </div>
+                        <div
+                          onClick={() => setTraderMenu(!traderMenu)}
+                          className="text-xl"
+                        >
+                          <IoMdArrowDropdown />
+                        </div>
+                      </div>
+                    )}
                     <AnimatePresence>
-                    {traderMenu &&<motion.div
-                    initial={{scaleY:0}}
-                    whileInView={{scaleY:1}}
-                    exit={{scaleY:0}}
-                    transition={{duration:0.3}}
-                    className="w-[95%] my-5 flex flex-wrap max-md:px-10 px-20 justify-center min-h-20 ">
-                      {/*  */}
-                        <Link href='/addproduct' className="text-2xl flex gap-5 items-center">  
-
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><MdOutlineStoreMallDirectory/></span> 
-                     <h1 className="text-xl">Add Product</h1>
-                     </Link>
-                     {/*  */}
-                        <Link href='/addcategory' className="text-2xl my-3 flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><BiCategory/></span> 
-                     <h1 className="text-xl">Add Category</h1>
-                     </Link>
-                     {/*  */}
-                        <Link href='/productmangement' className="text-2xl my-3 flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><CgProductHunt/></span> 
-                     <h1 className="text-xl"> All Product</h1>
-                     </Link>
-                     {/*  */}
-                      </motion.div>}
+                      {traderMenu && (
+                        <motion.div
+                          initial={{ scaleY: 0 }}
+                          whileInView={{ scaleY: 1 }}
+                          exit={{ scaleY: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="w-[95%] my-5 flex flex-wrap max-md:px-10 px-20 justify-center min-h-20 "
+                        >
+                          {/*  */}
+                          <Link
+                            href="/addproduct"
+                            className="text-2xl flex gap-5 items-center"
+                          >
+                            <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                              <MdOutlineStoreMallDirectory />
+                            </span>
+                            <h1 className="text-xl">Add Product</h1>
+                          </Link>
+                          {/*  */}
+                          <Link
+                            href="/addcategory"
+                            className="text-2xl my-3 flex gap-5 items-center"
+                          >
+                            <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                              <BiCategory />
+                            </span>
+                            <h1 className="text-xl">Add Category</h1>
+                          </Link>
+                          {/*  */}
+                          <Link
+                            href="/productmangement"
+                            className="text-2xl my-3 flex gap-5 items-center"
+                          >
+                            <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                              <CgProductHunt />
+                            </span>
+                            <h1 className="text-xl"> All Product</h1>
+                          </Link>
+                          {/*  */}
+                        </motion.div>
+                      )}
                     </AnimatePresence>
                     {/*  */}
                     <div
-                    onClick={()=>logout()}
-                    className=" w-[95%] h-12 cursor-pointer hover:bg-red-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3">
-                     <div className="text-2xl flex gap-5 items-center">
-                     <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200"><CgLogOut/></span> 
-                     <h1 className="text-xl">Log Out</h1>
-                     </div>
+                      onClick={() => logout()}
+                      className=" w-[95%] h-12 cursor-pointer hover:bg-red-300 duration-300 px-5 rounded-xl justify-between   flex   items-center gap-3"
+                    >
+                      <div className="text-2xl flex gap-5 items-center">
+                        <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
+                          <CgLogOut />
+                        </span>
+                        <h1 className="text-xl">Log Out</h1>
+                      </div>
                     </div>
-                   {/*  */}
-                    
-                    
+                    {/*  */}
                   </div>
                 )}
               </>
