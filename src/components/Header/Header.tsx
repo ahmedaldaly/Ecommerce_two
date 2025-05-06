@@ -278,7 +278,7 @@ const Header = () => {
                           </Link>
                           {/*  */}
                           <Link
-                            href=""
+                            href="/categorymange"
                             className="text-2xl my-3 flex gap-5 items-center"
                           >
                             <span className="w-10 h-10 flex justify-center items-center rounded-full bg-gray-200">
