@@ -1,15 +1,14 @@
-'use client'
+
+import Hero from '@/components/Home/Hero'
 import React from 'react'
-import { useSelector } from 'react-redux'
+
 
 const Page = () => {
-  const fetch = useSelector((state:any) => state.Product) // ← صح
-  const fetchTrider = useSelector((state:any) => state.TriderProduct) // ← صح
-
-  console.log(fetchTrider)
 
   return (
-    <div>page</div>
+    <div className='w-full min-h-screen overflow-hidden'>
+      <Hero/>
+    </div>
   )
 }
 
